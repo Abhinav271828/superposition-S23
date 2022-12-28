@@ -1,11 +1,11 @@
 from data import *
 
 class ToyRNN(nn.Module):
-    def __init__(self, input_size, hidden_size):
+    def __init__(self, input_size, hidden_size, nonlinearity='relu'):
         super().__init__()
         self.is_ = input_size
         self.hs = hidden_size
-        self.rnn = nn.RNN(input_size=input_size, hidden_size=hidden_size, batch_first=True, nonlinearity='relu')
+        self.rnn = nn.RNN(input_size=input_size, hidden_size=hidden_size, batch_first=True, nonlinearity=nonlinearity)
         self.ffn = nn.Sequential(nn.Linear(in_features=hidden_size, out_features=input_size),
                                  nn.ReLU())
 

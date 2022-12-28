@@ -2,7 +2,7 @@ from model import *
 
 ds = OffsetData(7, 0, 200)
 
-#toy = torch.load('in=7-out=5-linear-offset=0.pkl', map_location=DEVICE)
+#toy = torch.load('models/in=7-out=5-linear-offset=0.pkl', map_location=DEVICE)
 
 def visualise_model(model, type, dataset):
     x = ds[0][0]
@@ -34,55 +34,51 @@ def visualise_model(model, type, dataset):
     range_max = max(map(lambda t: t.max(), [w_x, b_x, w_h, b_h, w_f, b_f, x, hs, y])).item()
 
     # Inputs-outputs
-    visualise(x[:20].transpose(0,1), min=range_min, max=range_max)
-    visualise(hs[:20].transpose(0,1), min=range_min, max=range_max)
-    visualise(y[:20].transpose(0,1), min=range_min, max=range_max)
+    visualise(x[:20].transpose(0,1), min=range_min, max=range_max, title="Inputs")
+    visualise(hs[:20].transpose(0,1), min=range_min, max=range_max, title="Hidden states")
+    visualise(y[:20].transpose(0,1), min=range_min, max=range_max, title="Outputs")
 
     # Basis vectors
-    visualise(torch.mm(w_f,w_x), min=range_min, max=range_max)
-    visualise(torch.mm(w_x.transpose(0,1),w_x), min=range_min, max=range_max)
-    visualise(torch.norm(w_f, dim=0).unsqueeze(1), min=range_min, max=range_max)
-    visualise(torch.norm(w_x, dim=0).unsqueeze(1), min=range_min, max=range_max)
+    visualise(torch.mm(w_f,w_x), min=range_min, max=range_max, title="W_f • W_x")
+    visualise(torch.mm(w_x.transpose(0,1),w_x), min=range_min, max=range_max, title="W_x^T • W_x")
+    visualise(torch.norm(w_f, dim=0).unsqueeze(1), min=range_min, max=range_max, title="||W_f_i||")
+    visualise(torch.norm(w_x, dim=0).unsqueeze(1), min=range_min, max=range_max, title="||W_x_i||")
 
     # Computation in latent space
-    visualise(hs[0].unsqueeze(1), min=range_min, max=range_max)
-    visualise(w_h, min=range_min, max=range_max)
-    visualise(torch.mm(hs[0].unsqueeze(0), w_h.transpose(0,1)).transpose(0,1), min=range_min, max=range_max)
-    visualise(b_x.unsqueeze(1), min=range_min, max=range_max)
-    visualise((torch.mm(hs[0].unsqueeze(0), w_h.transpose(0,1))+b_x).transpose(0,1), min=range_min, max=range_max)
-    visualise(b_h.unsqueeze(1), min=range_min, max=range_max)
-    visualise((torch.mm(hs[0].unsqueeze(0), w_h.transpose(0,1))+b_h).transpose(0,1), min=range_min, max=range_max)
-    visualise((b_h+b_x).unsqueeze(1), min=range_min, max=range_max)
-    visualise((torch.mm(hs[0].unsqueeze(0), w_h.transpose(0,1))+b_h+b_x).transpose(0,1), min=range_min, max=range_max)
+    visualise(hs[0].unsqueeze(1), min=range_min, max=range_max, title="h_0")
+    visualise(w_h, min=range_min, max=range_max, title="W_h")
+    visualise(torch.mm(hs[0].unsqueeze(0), w_h.transpose(0,1)).transpose(0,1), min=range_min, max=range_max, title="W_h • h_0")
+    visualise((b_h+b_x).unsqueeze(1), min=range_min, max=range_max, title="b_h + b_x")
+    visualise((torch.mm(hs[0].unsqueeze(0), w_h.transpose(0,1))+b_h+b_x).transpose(0,1), min=range_min, max=range_max, title="W_h • h_0 + b_h + b_x")
 
 # Nonlinear RNN
 ## Excess space in hidden state
 #toy = ToyRNN(7, 10).to(DEVICE)
 #toy.train(ds, BATCH_SIZE, 0.01)
-#torch.save(toy, 'in=7-out=10-nonlin-offset=0.pkl')
+#torch.save(toy, 'models/in=7-out=10-nonlin-offset=0.pkl')
 
 ## Just enough space in hidden state
 #toy = ToyRNN(7, 7).to(DEVICE)
 #toy.train(ds, BATCH_SIZE, 0.01)
-#torch.save(toy, 'in=7-out=7-nonlin-offset=0.pkl')
+#torch.save(toy, 'models/in=7-out=7-nonlin-offset=0.pkl')
 
 ## Not enough space in hidden state
 #toy = ToyRNN(7, 5).to(DEVICE)
 #toy.train(ds, BATCH_SIZE, 0.01)
-#torch.save(toy, 'in=7-out=5-nonlin-offset=0.pkl')
+#torch.save(toy, 'models/in=7-out=5-nonlin-offset=0.pkl')
 
 # Fully linear RNN
 ## Excess space in hidden state
 #toy = LinRNN(7, 10).to(DEVICE)
 #toy.train(ds, BATCH_SIZE, 0.01)
-#torch.save(toy, 'in=7-out=10-linear-offset=0.pkl')
+#torch.save(toy, 'models/in=7-out=10-linear-offset=0.pkl')
 
 ## Just enough space in hidden state
 #toy = LinRNN(7, 7).to(DEVICE)
 #toy.train(ds, BATCH_SIZE, 0.01)
-#torch.save(toy, 'in=7-out=7-linear-offset=0.pkl')
+#torch.save(toy, 'models/in=7-out=7-linear-offset=0.pkl')
 
 ## Not enough space in hidden state
 #toy = LinRNN(7, 5).to(DEVICE)
 #toy.train(ds, BATCH_SIZE, 0.01)
-#torch.save(toy, 'in=7-out=5-linear-offset=0.pkl')
+#torch.save(toy, 'models/in=7-out=5-linear-offset=0.pkl')
