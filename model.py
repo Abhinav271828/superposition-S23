@@ -90,12 +90,13 @@ class TieRNN(nn.Module):
         self.hs = hidden_size
         self.rnn = nn.RNN(input_size=input_size, hidden_size=hidden_size,
                           batch_first=True, nonlinearity='relu', bias=False)
+        self.act = nn.ReLU()
 
     def forward(self, batch):
                       # [bz, seq, is]
         hidden_states, _ = self.rnn(batch)
         # [bz, seq, hs]
-        preds = torch.matmul(hidden_states, self.rnn.weight_ih_l0)
+        preds = self.act(torch.matmul(hidden_states, self.rnn.weight_ih_l0))
         # [bz, seq, is]
         return preds
 
