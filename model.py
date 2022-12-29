@@ -84,20 +84,33 @@ class LinRNN(nn.Module):
             print(f"Loss at epoch {e}: {avg_loss}")
 
 class TieRNN(nn.Module):
-    def __init__(self, input_size, hidden_size, bias=None):
+    def __init__(self, input_size, hidden_size, bias=False):
         super().__init__()
         self.is_ = input_size
         self.hs = hidden_size
+        self.bias = bias
         self.rnn = nn.RNN(input_size=input_size, hidden_size=hidden_size,
-                          batch_first=True, nonlinearity='relu', bias=False)
+                          batch_first=True, nonlinearity='relu', bias=bool(bias))
+
+        if bias == True: self.b_f = nn.Parameter(torch.rand(input_size))
         self.act = nn.ReLU()
 
     def forward(self, batch):
                       # [bz, seq, is]
         hidden_states, _ = self.rnn(batch)
         # [bz, seq, hs]
-        preds = self.act(torch.matmul(hidden_states, self.rnn.weight_ih_l0))
-        # [bz, seq, is]
+        if self.bias == False:
+            preds = self.act(torch.matmul(hidden_states, self.rnn.weight_ih_l0))
+            # [bz, seq, is]
+        elif self.bias == True:
+            preds = self.act(torch.matmul(hidden_states, self.rnn.weight_ih_l0) + self.b_f)
+                           # [bz, seq, is]                                      # [is]
+        elif self.bias == 'tied':
+            preds = self.act(torch.matmul(hidden_states, self.rnn.weight_ih_l0)
+                             # [bz, seq, is]
+                             - torch.matmul(self.rnn.weight_ih_l0.transpose(0,1), (self.rnn.bias_ih_l0+self.rnn.bias_hh_l0)))
+                                            # [is, hs]                            # [hs]
+                             # [is]
         return preds
 
     def train_epoch(self, dl, optim, lf):
