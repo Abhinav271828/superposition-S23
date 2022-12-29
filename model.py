@@ -29,7 +29,7 @@ class ToyRNN(nn.Module):
             sum += loss.item()
         return sum/len(dl)
 
-    def train(self, dataset, lr=0.01):
+    def train(self, dataset, lr=0.1):
         dl = DataLoader(dataset, batch_size=BATCH_SIZE)
         optim = torch.optim.SGD(params=self.parameters(), lr=lr)
         lf = nn.MSELoss()
@@ -75,10 +75,22 @@ class LinRNN(nn.Module):
             sum += loss.item()
         return sum/len(dl)
 
-    def train(self, dataset, lr=0.01):
+    def train(self, dataset, lr=0.1):
         dl = DataLoader(dataset, batch_size=BATCH_SIZE)
         optim = torch.optim.SGD(params=self.parameters(), lr=lr)
         lf = nn.MSELoss()
         for e in range(20):
             avg_loss = self.train_epoch(dl, optim, lf)
             print(f"Loss at epoch {e}: {avg_loss}")
+
+def get_hidden_states(model, x):
+    if isinstance(model, ToyRNN):
+        hs, _ = model.rnn(x)
+    elif isinstance(model, LinRNN):
+        hs = []
+        h = torch.zeros(model.hs)
+        for t in x:
+            h = model.w_x(t) + model.w_h(h)
+            hs.append(h)
+        hs = torch.stack(hs,dim=0)
+    return hs
