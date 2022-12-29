@@ -1,6 +1,6 @@
 from config import *
 
-def visualise(y, min, max, cmap=[(0,'blue'), (1, 'red')], title=""):
+def visualise(y, min, max, cmap=[(0,'blue'), (1, 'red')], title="", text_auto=False):
     if (len(y.shape) == 1):
         y = y.unsqueeze(0)
     elif (len(y.shape) == 3):
@@ -8,7 +8,7 @@ def visualise(y, min, max, cmap=[(0,'blue'), (1, 'red')], title=""):
     #plt.imshow(y.detach().numpy(), cmap=cmap)
     #plt.colorbar()
     #plt.show()
-    fig = px.imshow(y.detach().numpy(), zmin=min, zmax=max, color_continuous_scale=cmap, title=title)
+    fig = px.imshow(y.detach().numpy(), zmin=min, zmax=max, color_continuous_scale=cmap, title=title, text_auto=text_auto)
     fig.show()
 
 class OffsetData(Dataset):

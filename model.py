@@ -1,12 +1,13 @@
 from data import *
 
 class ToyRNN(nn.Module):
-    def __init__(self, input_size, hidden_size, nonlinearity='relu'):
+    def __init__(self, input_size, hidden_size, nonlinearity='relu', bias=True):
         super().__init__()
         self.is_ = input_size
         self.hs = hidden_size
-        self.rnn = nn.RNN(input_size=input_size, hidden_size=hidden_size, batch_first=True, nonlinearity=nonlinearity)
-        self.ffn = nn.Sequential(nn.Linear(in_features=hidden_size, out_features=input_size),
+        self.rnn = nn.RNN(input_size=input_size, hidden_size=hidden_size,
+                          batch_first=True, nonlinearity=nonlinearity, bias=bias)
+        self.ffn = nn.Sequential(nn.Linear(in_features=hidden_size, out_features=input_size, bias=bias),
                                  nn.ReLU())
 
     def forward(self, batch):
@@ -28,22 +29,22 @@ class ToyRNN(nn.Module):
             sum += loss.item()
         return sum/len(dl)
 
-    def train(self, dataset, batch_size, lr):
-        dl = DataLoader(dataset, batch_size=batch_size)
-        optim = torch.optim.Adam(params=self.parameters(), lr=lr)
+    def train(self, dataset, lr=0.01):
+        dl = DataLoader(dataset, batch_size=BATCH_SIZE)
+        optim = torch.optim.SGD(params=self.parameters(), lr=lr)
         lf = nn.MSELoss()
-        for e in range(20):
+        for e in range(10):
             avg_loss = self.train_epoch(dl, optim, lf)
             print(f"Loss at epoch {e}: {avg_loss}")
 
 class LinRNN(nn.Module):
-    def __init__(self, input_size, hidden_size):
+    def __init__(self, input_size, hidden_size, bias=True):
         super().__init__()
         self.is_ = input_size
         self.hs = hidden_size
-        self.w_x = nn.Linear(in_features=input_size, out_features=hidden_size, bias=True)
-        self.w_h = nn.Linear(in_features=hidden_size, out_features=hidden_size, bias=True)
-        self.ffn = nn.Linear(in_features=hidden_size, out_features=input_size, bias=True)
+        self.w_x = nn.Linear(in_features=input_size, out_features=hidden_size, bias=bias)
+        self.w_h = nn.Linear(in_features=hidden_size, out_features=hidden_size, bias=bias)
+        self.ffn = nn.Linear(in_features=hidden_size, out_features=input_size, bias=bias)
     
     def forward(self, batch):
                       # [bz, seq, is]
@@ -74,9 +75,9 @@ class LinRNN(nn.Module):
             sum += loss.item()
         return sum/len(dl)
 
-    def train(self, dataset, batch_size, lr):
-        dl = DataLoader(dataset, batch_size=batch_size)
-        optim = torch.optim.Adam(params=self.parameters(), lr=lr)
+    def train(self, dataset, lr=0.01):
+        dl = DataLoader(dataset, batch_size=BATCH_SIZE)
+        optim = torch.optim.SGD(params=self.parameters(), lr=lr)
         lf = nn.MSELoss()
         for e in range(20):
             avg_loss = self.train_epoch(dl, optim, lf)

@@ -4,24 +4,27 @@ ds = OffsetData(7, 0, 200)
 
 #toy = torch.load('models/in=7-out=5-linear-offset=0.pkl', map_location=DEVICE)
 
-def visualise_model(model, type, dataset):
-    x = ds[0][0]
-    if type == "nonlin":
+def visualise_model(model, dataset):
+    x = dataset[0][0]
+    if isinstance(model, ToyRNN):
         w_x = model.rnn.weight_ih_l0
-        b_x = model.rnn.bias_ih_l0
         w_h = model.rnn.weight_hh_l0
-        b_h = model.rnn.bias_hh_l0
         w_f = model.ffn[0].weight
-        b_f = model.ffn[0].bias
+        try: 
+            b_x = model.rnn.bias_ih_l0
+            b_h = model.rnn.bias_hh_l0
+            b_f = model.ffn[0].bias
+        except AttributeError:
+            b_x = b_h = b_f = tensor(0)
         hs, _ = model.rnn(x)
         y = model(x)
-    elif type == "linear":
+    elif isinstance(model, LinRNN):
         w_x = model.w_x.weight
-        b_x = model.w_x.bias
         w_h = model.w_h.weight
-        b_h = model.w_h.bias
         w_f = model.ffn.weight
-        b_f = model.ffn.bias
+        b_x = model.w_x.bias if model.w_x.bias else tensor(0)
+        b_h = model.w_h.bias if model.w_h.bias else tensor(0)
+        b_f = model.ffn.bias if model.ffn.bias else tensor(0)
         hs = []
         h = torch.zeros(model.hs)
         for t in x:
@@ -41,44 +44,45 @@ def visualise_model(model, type, dataset):
     # Basis vectors
     visualise(torch.mm(w_f,w_x), min=range_min, max=range_max, title="W_f • W_x")
     visualise(torch.mm(w_x.transpose(0,1),w_x), min=range_min, max=range_max, title="W_x^T • W_x")
-    visualise(torch.norm(w_f, dim=0).unsqueeze(1), min=range_min, max=range_max, title="||W_f_i||")
-    visualise(torch.norm(w_x, dim=0).unsqueeze(1), min=range_min, max=range_max, title="||W_x_i||")
+    visualise(torch.norm(w_f, dim=0).unsqueeze(1), min=range_min, max=range_max, title="||W_f_i||", text_auto=True)
+    visualise(torch.norm(w_x, dim=0).unsqueeze(1), min=range_min, max=range_max, title="||W_x_i||", text_auto=True)
 
     # Computation in latent space
     visualise(hs[0].unsqueeze(1), min=range_min, max=range_max, title="h_0")
     visualise(w_h, min=range_min, max=range_max, title="W_h")
     visualise(torch.mm(hs[0].unsqueeze(0), w_h.transpose(0,1)).transpose(0,1), min=range_min, max=range_max, title="W_h • h_0")
-    visualise((b_h+b_x).unsqueeze(1), min=range_min, max=range_max, title="b_h + b_x")
-    visualise((torch.mm(hs[0].unsqueeze(0), w_h.transpose(0,1))+b_h+b_x).transpose(0,1), min=range_min, max=range_max, title="W_h • h_0 + b_h + b_x")
+    if (b_h != 0):
+        visualise((b_h+b_x).unsqueeze(1), min=range_min, max=range_max, title="b_h + b_x")
+        visualise((torch.mm(hs[0].unsqueeze(0), w_h.transpose(0,1))+b_h+b_x).transpose(0,1), min=range_min, max=range_max, title="W_h • h_0 + b_h + b_x")
 
 # Nonlinear RNN
 ## Excess space in hidden state
 #toy = ToyRNN(7, 10).to(DEVICE)
-#toy.train(ds, BATCH_SIZE, 0.01)
+#toy.train(ds)
 #torch.save(toy, 'models/in=7-out=10-nonlin-offset=0.pkl')
 
 ## Just enough space in hidden state
 #toy = ToyRNN(7, 7).to(DEVICE)
-#toy.train(ds, BATCH_SIZE, 0.01)
+#toy.train(ds)
 #torch.save(toy, 'models/in=7-out=7-nonlin-offset=0.pkl')
 
 ## Not enough space in hidden state
 #toy = ToyRNN(7, 5).to(DEVICE)
-#toy.train(ds, BATCH_SIZE, 0.01)
+#toy.train(ds)
 #torch.save(toy, 'models/in=7-out=5-nonlin-offset=0.pkl')
 
 # Fully linear RNN
 ## Excess space in hidden state
 #toy = LinRNN(7, 10).to(DEVICE)
-#toy.train(ds, BATCH_SIZE, 0.01)
+#toy.train(ds)
 #torch.save(toy, 'models/in=7-out=10-linear-offset=0.pkl')
 
 ## Just enough space in hidden state
 #toy = LinRNN(7, 7).to(DEVICE)
-#toy.train(ds, BATCH_SIZE, 0.01)
+#toy.train(ds)
 #torch.save(toy, 'models/in=7-out=7-linear-offset=0.pkl')
 
 ## Not enough space in hidden state
 #toy = LinRNN(7, 5).to(DEVICE)
-#toy.train(ds, BATCH_SIZE, 0.01)
+#toy.train(ds)
 #torch.save(toy, 'models/in=7-out=5-linear-offset=0.pkl')

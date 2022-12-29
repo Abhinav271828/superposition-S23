@@ -1,5 +1,5 @@
 import torch
-from torch import nn
+from torch import nn, tensor
 from torch.utils.data import Dataset, DataLoader
 import matplotlib.pyplot as plt
 import plotly.express as px
