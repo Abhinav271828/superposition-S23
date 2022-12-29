@@ -21,9 +21,9 @@ def visualise_model(model, dataset):
         w_x = model.w_x.weight
         w_h = model.w_h.weight
         w_f = model.ffn.weight
-        b_x = model.w_x.bias if model.w_x.bias else tensor(0)
-        b_h = model.w_h.bias if model.w_h.bias else tensor(0)
-        b_f = model.ffn.bias if model.ffn.bias else tensor(0)
+        b_x = model.w_x.bias if model.w_x.bias is not None else tensor(0)
+        b_h = model.w_h.bias if model.w_h.bias is not None else tensor(0)
+        b_f = model.ffn.bias if model.ffn.bias is not None else tensor(0)
         y = model(x.unsqueeze(0)).view(-1,model.is_)
     elif isinstance(model, TieRNN):
         w_x = model.rnn.weight_ih_l0
@@ -60,6 +60,30 @@ def visualise_model(model, dataset):
     if (len(b_h.shape) != 0):
         visualise((b_h+b_x).unsqueeze(1), min=range_min, max=range_max, title="b_h + b_x")
         visualise((torch.mm(hs[0].unsqueeze(0), w_h.transpose(0,1))+b_h+b_x).transpose(0,1), min=range_min, max=range_max, title="W_h • h_0 + b_h + b_x")
+
+descriptions = [('7-10:Nonlin:True', 'models/in=7-out=10-nonlin-offset=0.pkl'),
+                ('7-10:Nonlin:False', 'models/in=7-out=10-nonlin-offset=0-bias=False.pkl'),
+                ('7-10:Linear:True', 'models/in=7-out=10-linear-offset=0.pkl'),
+                ('7-10:Linear:False', 'models/in=7-out=10-linear-offset=0-bias=False.pkl'),
+                ('7-10:Tied:True', 'models/in=7-out=10-tied-offset=0-bias=True.pkl'),
+                ('7-10:Tied:False', 'models/in=7-out=10-tied-offset=0-bias=False.pkl'),
+                ('7-10:Tied:Tied', 'models/in=7-out=10-tied-offset=0-bias=False.pkl'),
+
+                ('7-7:Nonlin:True', 'models/in=7-out=7-nonlin-offset=0.pkl'),
+                ('7-7:Nonlin:False', 'models/in=7-out=7-nonlin-offset=0-bias=False.pkl'),
+                ('7-7:Linear:True', 'models/in=7-out=7-linear-offset=0.pkl'),
+                ('7-7:Linear:False', 'models/in=7-out=7-linear-offset=0-bias=False.pkl'),
+                ('7-7:Tied:True', 'models/in=7-out=7-tied-offset=0-bias=True.pkl'),
+                ('7-7:Tied:False', 'models/in=7-out=7-tied-offset=0-bias=False.pkl'),
+                ('7-7:Tied:Tied', 'models/in=7-out=7-tied-offset=0-bias=False.pkl'),
+
+                ('7-5:Nonlin:True', 'models/in=7-out=5-nonlin-offset=0.pkl'),
+                ('7-5:Nonlin:False', 'models/in=7-out=5-nonlin-offset=0-bias=False.pkl'),
+                ('7-5:Linear:True', 'models/in=7-out=5-linear-offset=0.pkl'),
+                ('7-5:Linear:False', 'models/in=7-out=5-linear-offset=0-bias=False.pkl'),
+                ('7-5:Tied:True', 'models/in=7-out=5-tied-offset=0-bias=True.pkl'),
+                ('7-5:Tied:False', 'models/in=7-out=5-tied-offset=0-bias=False.pkl'),
+                ('7-5:Tied:Tied', 'models/in=7-out=5-tied-offset=0-bias=False.pkl')]
 
 # Nonlinear RNN
 ## Excess space in hidden state
