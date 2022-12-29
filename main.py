@@ -51,7 +51,7 @@ def visualise_model(model, dataset):
     visualise(hs[0].unsqueeze(1), min=range_min, max=range_max, title="h_0")
     visualise(w_h, min=range_min, max=range_max, title="W_h")
     visualise(torch.mm(hs[0].unsqueeze(0), w_h.transpose(0,1)).transpose(0,1), min=range_min, max=range_max, title="W_h • h_0")
-    if (b_h != 0):
+    if (len(b_h.shape) != 0):
         visualise((b_h+b_x).unsqueeze(1), min=range_min, max=range_max, title="b_h + b_x")
         visualise((torch.mm(hs[0].unsqueeze(0), w_h.transpose(0,1))+b_h+b_x).transpose(0,1), min=range_min, max=range_max, title="W_h • h_0 + b_h + b_x")
 
