@@ -25,9 +25,20 @@ def visualise_model(model, dataset):
         b_h = model.w_h.bias if model.w_h.bias else tensor(0)
         b_f = model.ffn.bias if model.ffn.bias else tensor(0)
         y = model(x.unsqueeze(0)).view(-1,model.is_)
+    elif isinstance(model, TieRNN):
+        w_x = model.rnn.weight_ih_l0
+        w_h = model.rnn.weight_hh_l0
+        w_f = w_x.transpose(0,1)
+        try: 
+            b_x = model.rnn.bias_ih_l0
+            b_h = model.rnn.bias_hh_l0
+            b_f = tensor(0)
+        except AttributeError:
+            b_x = b_h = b_f = tensor(0)
+        y = model(x)
 
     hs = get_hidden_states(model, x)
-    
+
     range_min = min(map(lambda t: t.min(), [w_x, b_x, w_h, b_h, w_f, b_f, x, hs, y])).item()
     range_max = max(map(lambda t: t.max(), [w_x, b_x, w_h, b_h, w_f, b_f, x, hs, y])).item()
 

@@ -83,8 +83,43 @@ class LinRNN(nn.Module):
             avg_loss = self.train_epoch(dl, optim, lf)
             print(f"Loss at epoch {e}: {avg_loss}")
 
+class TieRNN(nn.Module):
+    def __init__(self, input_size, hidden_size, bias=None):
+        super().__init__()
+        self.is_ = input_size
+        self.hs = hidden_size
+        self.rnn = nn.RNN(input_size=input_size, hidden_size=hidden_size,
+                          batch_first=True, nonlinearity='relu', bias=False)
+
+    def forward(self, batch):
+                      # [bz, seq, is]
+        hidden_states, _ = self.rnn(batch)
+        # [bz, seq, hs]
+        preds = torch.matmul(hidden_states, self.rnn.weight_ih_l0)
+        # [bz, seq, is]
+        return preds
+
+    def train_epoch(self, dl, optim, lf):
+        sum = 0
+        for batch, gold in tqdm(dl):
+            optim.zero_grad()
+            pred = self(batch)
+            loss = lf(pred, gold)
+            loss.backward()
+            optim.step()
+            sum += loss.item()
+        return sum/len(dl)
+
+    def train(self, dataset, lr=0.1):
+        dl = DataLoader(dataset, batch_size=BATCH_SIZE)
+        optim = torch.optim.SGD(params=self.parameters(), lr=lr)
+        lf = nn.MSELoss()
+        for e in range(20):
+            avg_loss = self.train_epoch(dl, optim, lf)
+            print(f"Loss at epoch {e}: {avg_loss}")
+
 def get_hidden_states(model, x):
-    if isinstance(model, ToyRNN):
+    if isinstance(model, ToyRNN) or isinstance(model, TieRNN):
         hs, _ = model.rnn(x)
     elif isinstance(model, LinRNN):
         hs = []
