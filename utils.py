@@ -11,7 +11,8 @@ def visualise(y, min, max, cmap=[(0,'blue'), (1, 'red')], title="", text_auto=Fa
     fig = px.imshow(y.detach().numpy(), zmin=min, zmax=max, color_continuous_scale=cmap, title=title, text_auto=text_auto)
     fig.show()
 
-def visualise_model(model, x):
+def visualise_model(model):
+    x = OffsetData(7, 0, 200, 1)[0][0]
     if model.model_type == "nonlin":
         w_x = model.rnn.weight_ih_l0
         w_h = model.rnn.weight_hh_l0
@@ -64,3 +65,8 @@ def visualise_model(model, x):
     if (len(b_h.shape) != 0):
         visualise((b_h+b_x).unsqueeze(1), min=range_min, max=range_max, title="b_h + b_x")
         visualise((torch.mm(hs[0].unsqueeze(0), w_h.transpose(0,1))+b_h+b_x).transpose(0,1), min=range_min, max=range_max, title="W_h • h_0 + b_h + b_x")
+
+def load_model_from_name(cls, name):
+    checkpoint = torch.load('models/' + name)
+    model = cls.load_from_checkpoint('models/' + name, checkpoint['hyper_parameters'])
+    return model

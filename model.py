@@ -1,14 +1,14 @@
 from data import *
 
 class ToyModels(pl.LightningModule):
-    def __init__(self, input_size, hidden_size, offset):
+    def __init__(self, input_size, hidden_size, offset, lr, lf):
         super().__init__()
-        self.save_hyperparameters()
+        self.save_hyperparameters(ignore=['lf'])
         self.is_ = input_size
         self.hs = hidden_size
         self.offset = offset
-        self.lr = 0.01
-        self.lf = nn.MSELoss()
+        self.lr = lr
+        self.lf = lf
     
     def get_dataloader(self, seq_length=200, num_samples=20000):
         ds = OffsetData(self.is_, self.offset, seq_length, num_samples)
@@ -38,13 +38,13 @@ class ToyModels(pl.LightningModule):
         return optimizer
 
 class ToyRNN(ToyModels):
-    def __init__(self, input_size, hidden_size, offset, nonlinearity='relu', bias=True):
-        super().__init__(input_size, hidden_size, offset)
+    def __init__(self, input_size, hidden_size, offset, lr=0.01, lf=nn.MSELoss(), nonlinearity='relu', bias=True):
+        super().__init__(input_size, hidden_size, offset, lr=lr, lf=lf)
         self.rnn = nn.RNN(input_size=input_size, hidden_size=hidden_size,
                           batch_first=True, nonlinearity=nonlinearity, bias=bias)
         self.ffn = nn.Sequential(nn.Linear(in_features=hidden_size, out_features=input_size, bias=bias),
                                  nn.ReLU())
-        self.model_type = "nonlinear"
+        self.model_type = "nonlin"
 
     def forward(self, batch):
                       # [bz, seq, is]
@@ -55,8 +55,8 @@ class ToyRNN(ToyModels):
         return hidden_states, preds
 
 class LinRNN(ToyModels):
-    def __init__(self, input_size, hidden_size, offset, bias=True):
-        super().__init__(input_size, hidden_size, offset)
+    def __init__(self, input_size, hidden_size, offset, lr=0.01, lf=nn.MSELoss(), bias=True):
+        super().__init__(input_size, hidden_size, offset, lr=lr, lf=lf)
         self.w_x = nn.Linear(in_features=input_size, out_features=hidden_size, bias=bias)
         self.w_h = nn.Linear(in_features=hidden_size, out_features=hidden_size, bias=bias)
         self.ffn = nn.Linear(in_features=hidden_size, out_features=input_size, bias=bias)
@@ -81,8 +81,8 @@ class LinRNN(ToyModels):
         return hidden_states, preds
     
 class TieRNN(ToyModels):
-    def __init__(self, input_size, hidden_size, offset, bias=False):
-        super().__init__(input_size, hidden_size, offset)
+    def __init__(self, input_size, hidden_size, offset, lr=0.01, lf=nn.MSELoss(), bias=False):
+        super().__init__(input_size, hidden_size, offset, lr=lr, lf=lf)
         self.bias = bias
         self.rnn = nn.RNN(input_size=input_size, hidden_size=hidden_size,
                           batch_first=True, nonlinearity='relu', bias=bool(bias))

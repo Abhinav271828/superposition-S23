@@ -29,13 +29,15 @@ descriptions = [('7-10:Nonlin:True', 'models/in=7-out=10-nonlin-offset=0.pkl'),
                 ('7-5:Tied:Tied', 'models/in=7-out=5-tied-offset=0-bias=False.pkl')]
 
 # General code to run, save, load and visualise model
-#toy = ToyRNN(7, 10)
-#ckpt = pl.callbacks.ModelCheckpoint(dirpath='models/', filename='in=7-out=10-nonlin-bias=True', monitor='val_loss', mode='min', save_top_k=1)
+#toy = ToyRNN(7, 10, 0)
+#ckpt = pl.callbacks.ModelCheckpoint(dirpath='models/',
+#                                    filename='in=7-out=10-nonlin-bias=True-offset=0',
+#                                    monitor='val_loss',
+#                                    mode='min',
+#                                    save_top_k=1)
 #es = pl.callbacks.EarlyStopping(monitor='val_loss', mode='min', patience=3)
 #trn = pl.Trainer(auto_lr_find=True, max_epochs=100, callbacks=[ckpt, es])
 #trn.tune(toy)
 #trn.fit(toy)
-#checkpoint = torch.load('models/in=7-out=10-nonlin-bias=True')
-#toy_reloaded = ToyRNN.load_from_checkpoint('models/in=7-out=10-nonlin-bias=True',
-#                                           checkpoint['hyper_parameters'])
+#toy_reloaded = load_model_from_name('in=7-out=10-nonlin-bias=True-offset=0')
 #visualise_model(toy_reloaded, OffsetData(7, 0, 200, 1)[0][0])
