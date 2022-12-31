@@ -1,14 +1,50 @@
 from data import *
 
-class ToyRNN(nn.Module):
-    def __init__(self, input_size, hidden_size, nonlinearity='relu', bias=True):
+class ToyModels(pl.LightningModule):
+    def __init__(self, input_size, hidden_size, offset):
         super().__init__()
+        self.save_hyperparameters()
         self.is_ = input_size
         self.hs = hidden_size
+        self.offset = offset
+        self.lr = 0.01
+        self.lf = nn.MSELoss()
+    
+    def get_dataloader(self, seq_length=200, num_samples=20000):
+        ds = OffsetData(self.is_, self.offset, seq_length, num_samples)
+        dl = DataLoader(ds, batch_size=BATCH_SIZE)
+        return dl
+
+    def step(self, loss_type, batch, batch_idx):
+        hs, pred = self(batch[0])
+        loss = self.lf(pred, batch[1])
+        self.log(loss_type, loss)
+        return loss
+
+    def training_step(self, batch, batch_idx):
+        return self.step("train_loss", batch, batch_idx)
+
+    def validation_step(self, batch, batch_idx):
+        return self.step("val_loss", batch, batch_idx)
+
+    def train_dataloader(self):
+        return self.get_dataloader()
+
+    def val_dataloader(self):
+        return self.get_dataloader(num_samples=5000)
+
+    def configure_optimizers(self):
+        optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
+        return optimizer
+
+class ToyRNN(ToyModels):
+    def __init__(self, input_size, hidden_size, offset, nonlinearity='relu', bias=True):
+        super().__init__(input_size, hidden_size, offset)
         self.rnn = nn.RNN(input_size=input_size, hidden_size=hidden_size,
                           batch_first=True, nonlinearity=nonlinearity, bias=bias)
         self.ffn = nn.Sequential(nn.Linear(in_features=hidden_size, out_features=input_size, bias=bias),
                                  nn.ReLU())
+        self.model_type = "nonlinear"
 
     def forward(self, batch):
                       # [bz, seq, is]
@@ -16,35 +52,15 @@ class ToyRNN(nn.Module):
         # [bz, seq, hs]
         preds = self.ffn(hidden_states)
         # [bz, seq, is]
-        return preds
+        return hidden_states, preds
 
-    def train_epoch(self, dl, optim, lf):
-        sum = 0
-        for batch, gold in tqdm(dl):
-            optim.zero_grad()
-            pred = self(batch)
-            loss = lf(pred, gold)
-            loss.backward()
-            optim.step()
-            sum += loss.item()
-        return sum/len(dl)
-
-    def train(self, dataset, lr=0.1):
-        dl = DataLoader(dataset, batch_size=BATCH_SIZE)
-        optim = torch.optim.SGD(params=self.parameters(), lr=lr)
-        lf = nn.MSELoss()
-        for e in range(10):
-            avg_loss = self.train_epoch(dl, optim, lf)
-            print(f"Loss at epoch {e}: {avg_loss}")
-
-class LinRNN(nn.Module):
-    def __init__(self, input_size, hidden_size, bias=True):
-        super().__init__()
-        self.is_ = input_size
-        self.hs = hidden_size
+class LinRNN(ToyModels):
+    def __init__(self, input_size, hidden_size, offset, bias=True):
+        super().__init__(input_size, hidden_size, offset)
         self.w_x = nn.Linear(in_features=input_size, out_features=hidden_size, bias=bias)
         self.w_h = nn.Linear(in_features=hidden_size, out_features=hidden_size, bias=bias)
         self.ffn = nn.Linear(in_features=hidden_size, out_features=input_size, bias=bias)
+        self.model_type = "linear"
     
     def forward(self, batch):
                       # [bz, seq, is]
@@ -52,48 +68,27 @@ class LinRNN(nn.Module):
         batch = batch.transpose(0,1)
         # [seq, bz, is]
         h = torch.zeros(bz, self.hs)
-        states = []
+        hidden_states = []
         for timestep in batch:
             # [bz, is]
             h = self.w_x(timestep) + self.w_h(h)
             # [bz, hs]
-            states.append(h)
-        states = torch.stack(states, dim=1)
+            hidden_states.append(h)
+        hidden_states = torch.stack(hidden_states, dim=1)
         # [bz, seq, hs]
-        preds = self.ffn(states)
+        preds = self.ffn(hidden_states)
         # [bz, seq, is]
-        return preds
+        return hidden_states, preds
     
-    def train_epoch(self, dl, optim, lf):
-        sum = 0
-        for batch, gold in tqdm(dl):
-            optim.zero_grad()
-            pred = self(batch)
-            loss = lf(pred, gold)
-            loss.backward()
-            optim.step()
-            sum += loss.item()
-        return sum/len(dl)
-
-    def train(self, dataset, lr=0.1):
-        dl = DataLoader(dataset, batch_size=BATCH_SIZE)
-        optim = torch.optim.SGD(params=self.parameters(), lr=lr)
-        lf = nn.MSELoss()
-        for e in range(20):
-            avg_loss = self.train_epoch(dl, optim, lf)
-            print(f"Loss at epoch {e}: {avg_loss}")
-
-class TieRNN(nn.Module):
-    def __init__(self, input_size, hidden_size, bias=False):
-        super().__init__()
-        self.is_ = input_size
-        self.hs = hidden_size
+class TieRNN(ToyModels):
+    def __init__(self, input_size, hidden_size, offset, bias=False):
+        super().__init__(input_size, hidden_size, offset)
         self.bias = bias
         self.rnn = nn.RNN(input_size=input_size, hidden_size=hidden_size,
                           batch_first=True, nonlinearity='relu', bias=bool(bias))
-
         if bias == True: self.b_f = nn.Parameter(torch.rand(input_size))
         self.act = nn.ReLU()
+        self.model_type = "tied"
 
     def forward(self, batch):
                       # [bz, seq, is]
@@ -111,35 +106,4 @@ class TieRNN(nn.Module):
                              - torch.matmul(self.rnn.weight_ih_l0.transpose(0,1), (self.rnn.bias_ih_l0+self.rnn.bias_hh_l0)))
                                             # [is, hs]                            # [hs]
                              # [is]
-        return preds
-
-    def train_epoch(self, dl, optim, lf):
-        sum = 0
-        for batch, gold in tqdm(dl):
-            optim.zero_grad()
-            pred = self(batch)
-            loss = lf(pred, gold)
-            loss.backward()
-            optim.step()
-            sum += loss.item()
-        return sum/len(dl)
-
-    def train(self, dataset, lr=0.1):
-        dl = DataLoader(dataset, batch_size=BATCH_SIZE)
-        optim = torch.optim.SGD(params=self.parameters(), lr=lr)
-        lf = nn.MSELoss()
-        for e in range(20):
-            avg_loss = self.train_epoch(dl, optim, lf)
-            print(f"Loss at epoch {e}: {avg_loss}")
-
-def get_hidden_states(model, x):
-    if isinstance(model, ToyRNN) or isinstance(model, TieRNN):
-        hs, _ = model.rnn(x)
-    elif isinstance(model, LinRNN):
-        hs = []
-        h = torch.zeros(model.hs)
-        for t in x:
-            h = model.w_x(t) + model.w_h(h)
-            hs.append(h)
-        hs = torch.stack(hs,dim=0)
-    return hs
+        return hidden_states, preds

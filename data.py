@@ -1,23 +1,12 @@
 from config import *
 
-def visualise(y, min, max, cmap=[(0,'blue'), (1, 'red')], title="", text_auto=False):
-    if (len(y.shape) == 1):
-        y = y.unsqueeze(0)
-    elif (len(y.shape) == 3):
-        y = y.squeeze(0)
-    #plt.imshow(y.detach().numpy(), cmap=cmap)
-    #plt.colorbar()
-    #plt.show()
-    fig = px.imshow(y.detach().numpy(), zmin=min, zmax=max, color_continuous_scale=cmap, title=title, text_auto=text_auto)
-    fig.show()
-
 class OffsetData(Dataset):
-    def __init__(self, input_size, offset, seq_length):
+    def __init__(self, input_size, offset, seq_length, num_samples=20000):
         self.input_size = input_size
         self.offset = offset
 
-        self.inputs = torch.rand(20000, seq_length, input_size).to(DEVICE)
-        self.outputs = torch.concat([torch.zeros(20000, offset, input_size).to(DEVICE),
+        self.inputs = torch.rand(num_samples, seq_length, input_size).to(DEVICE)
+        self.outputs = torch.concat([torch.zeros(num_samples, offset, input_size).to(DEVICE),
                                     self.inputs[:, offset:, :]],
                                     dim=1).to(DEVICE)
     
