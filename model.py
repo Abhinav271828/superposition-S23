@@ -18,7 +18,7 @@ class ToyModels(pl.LightningModule):
     def step(self, loss_type, batch, batch_idx):
         hs, pred = self(batch[0])
         loss = self.lf(pred, batch[1])
-        self.log(loss_type, loss)
+        self.log(loss_type, loss, prog_bar=True)
         return loss
 
     def training_step(self, batch, batch_idx):
@@ -81,7 +81,7 @@ class LinRNN(ToyModels):
         return hidden_states, preds
     
 class TieRNN(ToyModels):
-    def __init__(self, input_size, hidden_size, offset, lr=0.01, lf=nn.MSELoss(), bias=False):
+    def __init__(self, input_size, hidden_size, offset, lr=0.01, lf=nn.MSELoss(), bias=True):
         super().__init__(input_size, hidden_size, offset, lr=lr, lf=lf)
         self.bias = bias
         self.rnn = nn.RNN(input_size=input_size, hidden_size=hidden_size,
