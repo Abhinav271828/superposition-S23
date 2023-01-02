@@ -1,6 +1,6 @@
 from model import *
 
-def visualise(y, min, max, cmap=[(0,'blue'), (1, 'red')], title="", text_auto=False):
+def visualise(y, min, max, cmap=[(0,'blue'), (0.5, 'white'), (1, 'red')], title="", text_auto=False):
     if (len(y.shape) == 1):
         y = y.unsqueeze(0)
     elif (len(y.shape) == 3):
