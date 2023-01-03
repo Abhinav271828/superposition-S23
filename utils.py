@@ -5,7 +5,7 @@ def visualise(y, min, max, cmap=[(0,'blue'), (0.5, 'white'), (1, 'red')], title=
         y = y.unsqueeze(0)
     elif (len(y.shape) == 3):
         y = y.squeeze(0)
-    #plt.imshow(y.detach().numpy(), cmap=cmap)
+    #plt.imshow(y.detach().numpy(), vmin=min, vmax=max, cmap=cmap)
     #plt.colorbar()
     #plt.show()
     fig = px.imshow(y.detach().numpy(), zmin=min, zmax=max, color_continuous_scale=cmap, title=title, text_auto=text_auto)
@@ -31,7 +31,9 @@ def visualise_model(model):
         b_x = model.w_x.bias if model.w_x.bias is not None else tensor(0)
         b_h = model.w_h.bias if model.w_h.bias is not None else tensor(0)
         b_f = model.ffn.bias if model.ffn.bias is not None else tensor(0)
-        hs, y = model(x.unsqueeze(0)).view(-1,model.is_)
+        hs, y = model(x.unsqueeze(0))
+        hs = hs.view(-1, model.hs)
+        y = y.view(-1, model.is_)
     elif model.model_type == "tied":
         w_x = model.rnn.weight_ih_l0
         w_h = model.rnn.weight_hh_l0
