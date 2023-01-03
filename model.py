@@ -26,12 +26,20 @@ class ToyModels(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         return self.step("val_loss", batch, batch_idx)
+    
+    def test_step(self, batch, batch_idx):
+        return self.step("test_loss", batch, batch_idx)
 
     def train_dataloader(self):
         return self.get_dataloader()
 
     def val_dataloader(self):
         return self.get_dataloader(num_samples=5000)
+    
+    def test_dataloader(self):
+        ds = torch.load('testing_dataset.pkl')
+        dl = DataLoader(ds, batch_size=BATCH_SIZE)
+        return dl
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
