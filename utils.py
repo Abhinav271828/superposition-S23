@@ -68,6 +68,72 @@ def visualise_model(model):
         visualise((b_h+b_x).unsqueeze(1), min=range_min, max=range_max, title="b_h + b_x")
         visualise((torch.mm(hs[0].unsqueeze(0), w_h.transpose(0,1))+b_h+b_x).transpose(0,1), min=range_min, max=range_max, title="W_h • h_0 + b_h + b_x")
 
+def check_dimensionality(model, zero_out=None):
+    x = OffsetData(7, 0, 200, 1)[0][0]
+    # [200, 7]
+
+    if model.model_type == "nonlin":
+        w_x = model.rnn.weight_ih_l0.detach()
+        w_f = model.ffn[0].weight
+        hs, y = model(x)
+        if zero_out:
+            for i in zero_out: w_x[i] = 0
+    elif model.model_type == "linear":
+        w_x = model.w_x.weight
+        w_f = model.ffn.weight
+        hs, y = model(x.unsqueeze(0))
+        hs = hs.view(-1, model.hs)
+        y = y.view(-1, model.is_)
+    elif model.model_type == "tied":
+        w_x = model.rnn.weight_ih_l0
+        w_f = w_x.transpose(0,1)
+        hs, y = model(x)
+
+    range_min = min(map(lambda t: t.min(), [w_f, x, hs, y])).item()
+    range_max = max(map(lambda t: t.max(), [w_f, x, hs, y])).item()
+
+    visualise(x[:20].transpose(0,1), min=range_min, max=range_max, title="Inputs")
+    visualise(hs[:20].transpose(0,1), min=range_min, max=range_max, title="Hidden states")
+    visualise(y[:20].transpose(0,1), min=range_min, max=range_max, title="Outputs")
+    
+    cov_x = torch.cov(x.transpose(0,1))
+    # [7, 7]          [7, 200]
+    S1, _, _ = svd(cov_x.detach())
+    # [7, 7] -> basis of input space
+    S1 = tensor(S1)
+    # can take S1 = torch.eye(7). it doesn't matter.
+
+    S2 = w_x.transpose(0,1).detach()
+    # [7, hs] -> basis of hidden space (ideal)
+
+    cov_h = torch.cov(hs.transpose(0,1))
+    # [hs, hs]        [hs, 200]
+    _, s_H, _ = svd(cov_h.detach())
+    # [hs, hs] -> basis of hidden space (actual)
+    visualise(tensor(s_H), 0, s_H.max(), title="Eigenvalues of H covariance")
+
+    s1ts1_i = tensor(inv(mm(S1.transpose(0,1), S1).detach()))
+    # [7, 7]
+    s1ts2   = mm(S1.transpose(0,1), S2)
+    # [7, hs]
+    s2ts2_i = tensor(inv(mm(S2.transpose(0,1), S2).detach()))
+    # [hs, hs]
+
+    M = mm(mm(mm(mm(S1, s1ts1_i), s1ts2), s2ts2_i), S2.transpose(0,1))
+    # [7, 7]        [7, 7] [7, 7] [7, hs] [hs, hs] [hs, 7]
+    # Eigenspace of M is intersection of input space and hidden space
+
+    _, s_M, _ = svd(M.detach())
+    visualise(tensor(s_M), 0, s_M.max(), title="Eigenvalues of M")
+
+    err = y - x
+    # [200, 7]
+    cov_e = torch.cov(err.transpose(0,1))
+    # [7, 7]          [7, 200]
+
+    _, s_e, _ = svd(cov_e.detach())
+    visualise(tensor(s_e), 0, s_M.max(), title="Eigenvalues of error space")
+
 def load_model_from_name(cls, name):
     checkpoint = torch.load('models/' + name)
     model = cls.load_from_checkpoint('models/' + name, checkpoint['hyper_parameters'])
