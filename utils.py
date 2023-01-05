@@ -92,9 +92,9 @@ def check_dimensionality(model, zero_out=None):
     range_min = min(map(lambda t: t.min(), [w_f, x, hs, y])).item()
     range_max = max(map(lambda t: t.max(), [w_f, x, hs, y])).item()
 
-    visualise(x[:20].transpose(0,1), min=range_min, max=range_max, title="Inputs")
-    visualise(hs[:20].transpose(0,1), min=range_min, max=range_max, title="Hidden states")
-    visualise(y[:20].transpose(0,1), min=range_min, max=range_max, title="Outputs")
+    #visualise(x[:20].transpose(0,1), min=range_min, max=range_max, title="Inputs")
+    #visualise(hs[:20].transpose(0,1), min=range_min, max=range_max, title="Hidden states")
+    #visualise(y[:20].transpose(0,1), min=range_min, max=range_max, title="Outputs")
     
     cov_x = torch.cov(x.transpose(0,1))
     # [7, 7]          [7, 200]
@@ -132,7 +132,7 @@ def check_dimensionality(model, zero_out=None):
     # [7, 7]          [7, 200]
 
     _, s_e, _ = svd(cov_e.detach())
-    visualise(tensor(s_e), 0, s_M.max(), title="Eigenvalues of error space")
+    #visualise(tensor(s_e), 0, s_M.max(), title="Eigenvalues of error space")
 
 def load_model_from_name(cls, name):
     checkpoint = torch.load('models/' + name)

@@ -3,7 +3,8 @@ from utils import *
 classes = [('nonlin', ToyRNN),
            ('tanh', ToyRNN),
            ('linear', LinRNN),
-           ('tied', TieRNN)]
+           ('tied', TieRNN)
+          ]
 
 descriptions = [('7-10:Nonlin:True:v1', 'models/in=7-out=10-nonlin-bias=True-offset=0-v1.ckpt'),
                 ('7-10:Nonlin:True:v2', 'models/in=7-out=10-nonlin-bias=True-offset=0-v2.ckpt'),
@@ -17,10 +18,10 @@ descriptions = [('7-10:Nonlin:True:v1', 'models/in=7-out=10-nonlin-bias=True-off
                 ('7-10:Linear:True:v2', 'models/in=7-out=10-linear-bias=True-offset=0-v2.ckpt'),
                 ('7-10:Linear:False:v1', 'models/in=7-out=10-linear-bias=False-offset=0-v1.ckpt'),
                 ('7-10:Linear:False:v2', 'models/in=7-out=10-linear-bias=False-offset=0-v2.ckpt'),
-                ('7-10:Tied:True:v1', 'models/in=7-out=10-tied-bias=True-offset=0-v1.ckpt'),
-                ('7-10:Tied:True:v2', 'models/in=7-out=10-tied-bias=True-offset=0-v2.ckpt'),
-                ('7-10:Tied:False:v1', 'models/in=7-out=10-tied-bias=False-offset=0-v1.ckpt'),
-                ('7-10:Tied:False:v2', 'models/in=7-out=10-tied-bias=False-offset=0-v2.ckpt'),
+                #('7-10:Tied:True:v1', 'models/in=7-out=10-tied-bias=True-offset=0-v1.ckpt'),
+                #('7-10:Tied:True:v2', 'models/in=7-out=10-tied-bias=True-offset=0-v2.ckpt'),
+                #('7-10:Tied:False:v1', 'models/in=7-out=10-tied-bias=False-offset=0-v1.ckpt'),
+                #('7-10:Tied:False:v2', 'models/in=7-out=10-tied-bias=False-offset=0-v2.ckpt'),
 
                 ('7-7:Nonlin:True:v1', 'models/in=7-out=7-nonlin-bias=True-offset=0-v1.ckpt'),
                 ('7-7:Nonlin:True:v2', 'models/in=7-out=7-nonlin-bias=True-offset=0-v2.ckpt'),
@@ -34,10 +35,10 @@ descriptions = [('7-10:Nonlin:True:v1', 'models/in=7-out=10-nonlin-bias=True-off
                 ('7-7:Linear:True:v2', 'models/in=7-out=7-linear-bias=True-offset=0-v2.ckpt'),
                 ('7-7:Linear:False:v1', 'models/in=7-out=7-linear-bias=False-offset=0-v1.ckpt'),
                 ('7-7:Linear:False:v2', 'models/in=7-out=7-linear-bias=False-offset=0-v2.ckpt'),
-                ('7-7:Tied:True:v1', 'models/in=7-out=7-tied-bias=True-offset=0-v1.ckpt'),
-                ('7-7:Tied:True:v2', 'models/in=7-out=7-tied-bias=True-offset=0-v2.ckpt'),
-                ('7-7:Tied:False:v1', 'models/in=7-out=7-tied-bias=False-offset=0-v1.ckpt'),
-                ('7-7:Tied:False:v2', 'models/in=7-out=7-tied-bias=False-offset=0-v2.ckpt'),
+                #('7-7:Tied:True:v1', 'models/in=7-out=7-tied-bias=True-offset=0-v1.ckpt'),
+                #('7-7:Tied:True:v2', 'models/in=7-out=7-tied-bias=True-offset=0-v2.ckpt'),
+                #('7-7:Tied:False:v1', 'models/in=7-out=7-tied-bias=False-offset=0-v1.ckpt'),
+                #('7-7:Tied:False:v2', 'models/in=7-out=7-tied-bias=False-offset=0-v2.ckpt'),
 
                 ('7-5:Nonlin:True:v1', 'models/in=7-out=5-nonlin-bias=True-offset=0-v1.ckpt'),
                 ('7-5:Nonlin:True:v2', 'models/in=7-out=5-nonlin-bias=True-offset=0-v2.ckpt'),
@@ -51,10 +52,11 @@ descriptions = [('7-10:Nonlin:True:v1', 'models/in=7-out=10-nonlin-bias=True-off
                 ('7-5:Linear:True:v2', 'models/in=7-out=5-linear-bias=True-offset=0-v2.ckpt'),
                 ('7-5:Linear:False:v1', 'models/in=7-out=5-linear-bias=False-offset=0-v1.ckpt'),
                 ('7-5:Linear:False:v2', 'models/in=7-out=5-linear-bias=False-offset=0-v2.ckpt'),
-                ('7-5:Tied:True:v1', 'models/in=7-out=5-tied-bias=True-offset=0-v1.ckpt'),
-                ('7-5:Tied:True:v2', 'models/in=7-out=5-tied-bias=True-offset=0-v2.ckpt'),
-                ('7-5:Tied:False:v1', 'models/in=7-out=5-tied-bias=False-offset=0-v1.ckpt'),
-                ('7-5:Tied:False:v2', 'models/in=7-out=5-tied-bias=False-offset=0-v2.ckpt')]
+                #('7-5:Tied:True:v1', 'models/in=7-out=5-tied-bias=True-offset=0-v1.ckpt'),
+                #('7-5:Tied:True:v2', 'models/in=7-out=5-tied-bias=True-offset=0-v2.ckpt'),
+                #('7-5:Tied:False:v1', 'models/in=7-out=5-tied-bias=False-offset=0-v1.ckpt'),
+                #('7-5:Tied:False:v2', 'models/in=7-out=5-tied-bias=False-offset=0-v2.ckpt')
+               ]
 
 # General code to run, save, load and visualise model
 #toy = ToyRNN(7, 10, 0)
