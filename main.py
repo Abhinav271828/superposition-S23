@@ -56,21 +56,46 @@ descriptions = [('7-10:Nonlin:True:v1', 'models/in=7-out=10-nonlin-bias=True-off
                 #('7-5:Tied:True:v2', 'models/in=7-out=5-tied-bias=True-offset=0-v2.ckpt'),
                 #('7-5:Tied:False:v1', 'models/in=7-out=5-tied-bias=False-offset=0-v1.ckpt'),
                 #('7-5:Tied:False:v2', 'models/in=7-out=5-tied-bias=False-offset=0-v2.ckpt')
-               ]
+            
+                ('7-9:Nonlin:True:v1', 'models/in=7-out=9-nonlin-bias=True-offset=0-v1.ckpt'),
+                ('7-9:Nonlin:True:v2', 'models/in=7-out=9-nonlin-bias=True-offset=0-v2.ckpt'),
+                ('7-9:Nonlin:False:v1', 'models/in=7-out=9-nonlin-bias=False-offset=0-v1.ckpt'),
+                ('7-9:Nonlin:False:v2', 'models/in=7-out=9-nonlin-bias=False-offset=0-v2.ckpt'),
+                ('7-9:Tanh:True:v1', 'models/in=7-out=9-tanh-bias=True-offset=0-v1.ckpt'),
+                ('7-9:Tanh:True:v2', 'models/in=7-out=9-tanh-bias=True-offset=0-v2.ckpt'),
+                ('7-9:Tanh:False:v1', 'models/in=7-out=9-tanh-bias=False-offset=0-v1.ckpt'),
+                ('7-9:Tanh:False:v2', 'models/in=7-out=9-tanh-bias=False-offset=0-v2.ckpt'),
+                ('7-9:Linear:True:v1', 'models/in=7-out=9-linear-bias=True-offset=0-v1.ckpt'),
+                ('7-9:Linear:True:v2', 'models/in=7-out=9-linear-bias=True-offset=0-v2.ckpt'),
+                ('7-9:Linear:False:v1', 'models/in=7-out=9-linear-bias=False-offset=0-v1.ckpt'),
+                ('7-9:Linear:False:v2', 'models/in=7-out=9-linear-bias=False-offset=0-v2.ckpt'),
 
-# General code to run, save, load and visualise model
-#toy = ToyRNN(7, 10, 0)
-#ckpt = pl.callbacks.ModelCheckpoint(dirpath='models/',
-#                                    filename='in=7-out=10-nonlin-bias=True-offset=0',
-#                                    monitor='val_loss',
-#                                    mode='min',
-#                                    save_top_k=1)
-#es = pl.callbacks.EarlyStopping(monitor='val_loss', mode='min', patience=3)
-#trn = pl.Trainer(auto_lr_find=True, max_epochs=100, callbacks=[ckpt, es])
-#trn.tune(toy)
-#trn.fit(toy)
-#toy_reloaded = load_model_from_name(ToyRNN, 'in=7-out=10-nonlin-bias=True-offset=0')
-#visualise_model(toy_reloaded)
+                ('7-8:Nonlin:True:v1', 'models/in=7-out=8-nonlin-bias=True-offset=0-v1.ckpt'),
+                ('7-8:Nonlin:True:v2', 'models/in=7-out=8-nonlin-bias=True-offset=0-v2.ckpt'),
+                ('7-8:Nonlin:False:v1', 'models/in=7-out=8-nonlin-bias=False-offset=0-v1.ckpt'),
+                ('7-8:Nonlin:False:v2', 'models/in=7-out=8-nonlin-bias=False-offset=0-v2.ckpt'),
+                ('7-8:Tanh:True:v1', 'models/in=7-out=8-tanh-bias=True-offset=0-v1.ckpt'),
+                ('7-8:Tanh:True:v2', 'models/in=7-out=8-tanh-bias=True-offset=0-v2.ckpt'),
+                ('7-8:Tanh:False:v1', 'models/in=7-out=8-tanh-bias=False-offset=0-v1.ckpt'),
+                ('7-8:Tanh:False:v2', 'models/in=7-out=8-tanh-bias=False-offset=0-v2.ckpt'),
+                ('7-8:Linear:True:v1', 'models/in=7-out=8-linear-bias=True-offset=0-v1.ckpt'),
+                ('7-8:Linear:True:v2', 'models/in=7-out=8-linear-bias=True-offset=0-v2.ckpt'),
+                ('7-8:Linear:False:v1', 'models/in=7-out=8-linear-bias=False-offset=0-v1.ckpt'),
+                ('7-8:Linear:False:v2', 'models/in=7-out=8-linear-bias=False-offset=0-v2.ckpt'),
+
+                ('7-6:Nonlin:True:v1', 'models/in=7-out=6-nonlin-bias=True-offset=0-v1.ckpt'),
+                ('7-6:Nonlin:True:v2', 'models/in=7-out=6-nonlin-bias=True-offset=0-v2.ckpt'),
+                ('7-6:Nonlin:False:v1', 'models/in=7-out=6-nonlin-bias=False-offset=0-v1.ckpt'),
+                ('7-6:Nonlin:False:v2', 'models/in=7-out=6-nonlin-bias=False-offset=0-v2.ckpt'),
+                ('7-6:Tanh:True:v1', 'models/in=7-out=6-tanh-bias=True-offset=0-v1.ckpt'),
+                ('7-6:Tanh:True:v2', 'models/in=7-out=6-tanh-bias=True-offset=0-v2.ckpt'),
+                ('7-6:Tanh:False:v1', 'models/in=7-out=6-tanh-bias=False-offset=0-v1.ckpt'),
+                ('7-6:Tanh:False:v2', 'models/in=7-out=6-tanh-bias=False-offset=0-v2.ckpt'),
+                ('7-6:Linear:True:v1', 'models/in=7-out=6-linear-bias=True-offset=0-v1.ckpt'),
+                ('7-6:Linear:True:v2', 'models/in=7-out=6-linear-bias=True-offset=0-v2.ckpt'),
+                ('7-6:Linear:False:v1', 'models/in=7-out=6-linear-bias=False-offset=0-v1.ckpt'),
+                ('7-6:Linear:False:v2', 'models/in=7-out=6-linear-bias=False-offset=0-v2.ckpt')
+               ]
 
 def load_and_check_dimensionality(index):
     name, path = descriptions[index]
