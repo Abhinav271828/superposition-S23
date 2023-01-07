@@ -105,7 +105,6 @@ def check_dimensionality(model, zero_out=None):
 
     S2 = w_x.transpose(0,1).detach()
     # [7, hs] -> basis of hidden space (ideal)
-    _, s, _ = svd(S2)
 
     cov_h = torch.cov(hs.transpose(0,1))
     # [hs, hs]        [hs, 200]
@@ -113,29 +112,23 @@ def check_dimensionality(model, zero_out=None):
     # [hs, hs] -> basis of hidden space (actual)
     visualise(tensor(s_H), 0, s_H.max(), title="Eigenvalues of H covariance")
 
-    #s1ts1_i = tensor(inv(mm(S1.transpose(0,1), S1).detach()))
-    ## [7, 7]
-    #s1ts2   = mm(S1.transpose(0,1), S2)
-    ## [7, hs]
-    #s2ts2_i = tensor(inv(mm(S2.transpose(0,1), S2).detach()))
-    ## [hs, hs]
+    s1ts1_i = tensor(inv(mm(S1.transpose(0,1), S1).detach()))
+    # [7, 7]
+    s1ts2   = mm(S1.transpose(0,1), S2)
+    # [7, hs]
+    s2ts2_i = tensor(inv(mm(S2.transpose(0,1), S2).detach()))
+    # [hs, hs]
 
-    #M = mm(mm(mm(mm(S1, s1ts1_i), s1ts2), s2ts2_i), S2.transpose(0,1))
-    ## [7, 7]        [7, 7] [7, 7] [7, hs] [hs, hs] [hs, 7]
-    #_, s_M, _ = svd(M.detach())
-    ## Eigenspace of M is intersection of input space and hidden space
-    #visualise(tensor(s_M), 0, s_M.max(), title="Eigenvalues of Intersection Space")
-
-    #M = torch.cov(S2.transpose(0,1))
-    ## [hs, hs]    [hs, 7]
-    ## Eigenvalues of M represent dims
-
-    #_, s_M, _ = svd(M.detach())
-    #visualise(tensor(s_M), 0, s_M.max(), title="Eigenvalues of W_x covariance")
+    M = mm(mm(mm(mm(S1, s1ts1_i), s1ts2), s2ts2_i), S2.transpose(0,1))
+    # [7, 7]        [7, 7] [7, 7] [7, hs] [hs, hs] [hs, 7]
+    _, s_M, _ = svd(M.detach())
+    # Eigenspace of M is intersection of input space and hidden space
+    visualise(tensor(s_M), 0, s_M.max(), title="Eigenvalues of Intersection Space")
 
     M = S2
     _, s_M, _ = svd(M.detach())
     visualise(tensor(s_M), 0, s_M.max(), title="Eigenvalues of W_x")
+    print('\t'.join([str(x.item()) for x in s_M]))
 
     err = y - x
     # [200, 7]
@@ -145,7 +138,20 @@ def check_dimensionality(model, zero_out=None):
     _, s_e, _ = svd(cov_e.detach())
     visualise(tensor(s_e), 0, s_M.max(), title="Eigenvalues of error space")
 
+def train_and_save(model, name):
+    ckpt = pl.callbacks.ModelCheckpoint(dirpath='models/',
+                                        filename=name,
+                                        monitor='val_loss',
+                                        mode='min',
+                                        save_top_k=1)
+    es = pl.callbacks.EarlyStopping(monitor='val_loss', mode='min', patience=3)
+    trn = pl.Trainer(auto_lr_find=True, max_epochs=100, callbacks=[ckpt, es])
+    trn.tune(model)
+    trn.fit(model)
+    trn.test(model)
+
 def load_model_from_name(cls, name):
-    checkpoint = torch.load('models/' + name)
-    model = cls.load_from_checkpoint('models/' + name, checkpoint['hyper_parameters'])
+    #checkpoint = torch.load('models/' + name, map_location=DEVICE)
+    #model = cls.load_from_checkpoint('models/' + name, checkpoint['hyper_parameters'])
+    model = cls.load_from_checkpoint('models/' + name)
     return model
