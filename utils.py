@@ -137,6 +137,7 @@ def check_dimensionality(model, zero_out=None):
 
     _, s_e, _ = svd(cov_e.detach())
     visualise(tensor(s_e), 0, s_M.max(), title="Eigenvalues of error space")
+    #print('\t'.join([str(x.item()) for x in s_e]))
 
 def train_and_save(model, name):
     ckpt = pl.callbacks.ModelCheckpoint(dirpath='models/',
