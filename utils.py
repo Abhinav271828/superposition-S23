@@ -89,13 +89,13 @@ def check_dimensionality(model, zero_out=None):
         w_f = w_x.transpose(0,1)
         hs, y = model(x)
 
-    range_min = min(map(lambda t: t.min(), [w_f, x, hs, y])).item()
-    range_max = max(map(lambda t: t.max(), [w_f, x, hs, y])).item()
+    range_min = min(map(lambda t: t.min(), [w_x, x, hs, y])).item()
+    range_max = max(map(lambda t: t.max(), [w_x, x, hs, y])).item()
 
     visualise(x[:20].transpose(0,1), min=range_min, max=range_max, title="Inputs")
     visualise(hs[:20].transpose(0,1), min=range_min, max=range_max, title="Hidden states")
     visualise(y[:20].transpose(0,1), min=range_min, max=range_max, title="Outputs")
-    
+
     cov_x = torch.cov(x.transpose(0,1))
     # [7, 7]          [7, 200]
     S1, _, _ = svd(cov_x.detach())
