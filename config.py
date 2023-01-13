@@ -4,6 +4,7 @@ from torch.utils.data import Dataset, DataLoader
 import pytorch_lightning as pl
 import matplotlib.pyplot as plt
 import plotly.express as px
+import plotly.graph_objects as go
 import os
 from tqdm import tqdm
 from icecream import ic

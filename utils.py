@@ -1,4 +1,5 @@
 from model import *
+from bounds import *
 
 def visualise(y, min, max, cmap=[(0,'blue'), (0.5, 'white'), (1, 'red')], title="", text_auto=False):
     if (len(y.shape) == 1):
@@ -138,6 +139,14 @@ def check_dimensionality(model, zero_out=None):
     _, s_e, _ = svd(cov_e.detach())
     visualise(tensor(s_e), 0, s_M.max(), title="Eigenvalues of error space")
     #print('\t'.join([str(x.item()) for x in s_e]))
+
+def sv_box_plot():
+    box = go.Figure().add_trace(go.Box(y=abs_ubs)).add_trace(go.Box(y=abs_lbs))
+    box.show()
+    box = go.Figure().add_trace(go.Box(y=fst_ubs)).add_trace(go.Box(y=fst_lbs))
+    box.show()
+    box = go.Figure().add_trace(go.Box(y=sum_ubs)).add_trace(go.Box(y=sum_lbs))
+    box.show()
 
 def train_and_save(model, name):
     ckpt = pl.callbacks.ModelCheckpoint(dirpath='models/',
