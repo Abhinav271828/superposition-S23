@@ -5,100 +5,16 @@ classes = [('nonlin', ToyRNN),
            ('linear', LinRNN),
           ]
 
-descriptions = [('7-10:Nonlin:True:v1', 'models/in=7-out=10-nonlin-bias=True-offset=0-v1.ckpt'),
-                ('7-10:Nonlin:True:v2', 'models/in=7-out=10-nonlin-bias=True-offset=0-v2.ckpt'),
-                ('7-10:Nonlin:False:v1', 'models/in=7-out=10-nonlin-bias=False-offset=0-v1.ckpt'),
-                ('7-10:Nonlin:False:v2', 'models/in=7-out=10-nonlin-bias=False-offset=0-v2.ckpt'),
-                ('7-10:Tanh:True:v1', 'models/in=7-out=10-tanh-bias=True-offset=0-v1.ckpt'),
-                ('7-10:Tanh:True:v2', 'models/in=7-out=10-tanh-bias=True-offset=0-v2.ckpt'),
-                ('7-10:Tanh:False:v1', 'models/in=7-out=10-tanh-bias=False-offset=0-v1.ckpt'),
-                ('7-10:Tanh:False:v2', 'models/in=7-out=10-tanh-bias=False-offset=0-v2.ckpt'),
-                ('7-10:Linear:True:v1', 'models/in=7-out=10-linear-bias=True-offset=0-v1.ckpt'),
-                ('7-10:Linear:True:v2', 'models/in=7-out=10-linear-bias=True-offset=0-v2.ckpt'),
-                ('7-10:Linear:False:v1', 'models/in=7-out=10-linear-bias=False-offset=0-v1.ckpt'),
-                ('7-10:Linear:False:v2', 'models/in=7-out=10-linear-bias=False-offset=0-v2.ckpt'),
+descriptions = []
+for is_ in [7]:
+    for hs in range(10,3,-1):
+        for type in ['nonlin', 'tanh', 'linear']:
+            for bias in [True, False]:
+                for v in ['v1', 'v2']:
+                    descriptions.append(f'in={is_}-out={hs}-{type}-bias={bias}-offset=0-{v}.ckpt')
 
-                ('7-9:Nonlin:True:v1', 'models/in=7-out=9-nonlin-bias=True-offset=0-v1.ckpt'),
-                ('7-9:Nonlin:True:v2', 'models/in=7-out=9-nonlin-bias=True-offset=0-v2.ckpt'),
-                ('7-9:Nonlin:False:v1', 'models/in=7-out=9-nonlin-bias=False-offset=0-v1.ckpt'),
-                ('7-9:Nonlin:False:v2', 'models/in=7-out=9-nonlin-bias=False-offset=0-v2.ckpt'),
-                ('7-9:Tanh:True:v1', 'models/in=7-out=9-tanh-bias=True-offset=0-v1.ckpt'),
-                ('7-9:Tanh:True:v2', 'models/in=7-out=9-tanh-bias=True-offset=0-v2.ckpt'),
-                ('7-9:Tanh:False:v1', 'models/in=7-out=9-tanh-bias=False-offset=0-v1.ckpt'),
-                ('7-9:Tanh:False:v2', 'models/in=7-out=9-tanh-bias=False-offset=0-v2.ckpt'),
-                ('7-9:Linear:True:v1', 'models/in=7-out=9-linear-bias=True-offset=0-v1.ckpt'),
-                ('7-9:Linear:True:v2', 'models/in=7-out=9-linear-bias=True-offset=0-v2.ckpt'),
-                ('7-9:Linear:False:v1', 'models/in=7-out=9-linear-bias=False-offset=0-v1.ckpt'),
-                ('7-9:Linear:False:v2', 'models/in=7-out=9-linear-bias=False-offset=0-v2.ckpt'),
-
-                ('7-8:Nonlin:True:v1', 'models/in=7-out=8-nonlin-bias=True-offset=0-v1.ckpt'),
-                ('7-8:Nonlin:True:v2', 'models/in=7-out=8-nonlin-bias=True-offset=0-v2.ckpt'),
-                ('7-8:Nonlin:False:v1', 'models/in=7-out=8-nonlin-bias=False-offset=0-v1.ckpt'),
-                ('7-8:Nonlin:False:v2', 'models/in=7-out=8-nonlin-bias=False-offset=0-v2.ckpt'),
-                ('7-8:Tanh:True:v1', 'models/in=7-out=8-tanh-bias=True-offset=0-v1.ckpt'),
-                ('7-8:Tanh:True:v2', 'models/in=7-out=8-tanh-bias=True-offset=0-v2.ckpt'),
-                ('7-8:Tanh:False:v1', 'models/in=7-out=8-tanh-bias=False-offset=0-v1.ckpt'),
-                ('7-8:Tanh:False:v2', 'models/in=7-out=8-tanh-bias=False-offset=0-v2.ckpt'),
-                ('7-8:Linear:True:v1', 'models/in=7-out=8-linear-bias=True-offset=0-v1.ckpt'),
-                ('7-8:Linear:True:v2', 'models/in=7-out=8-linear-bias=True-offset=0-v2.ckpt'),
-                ('7-8:Linear:False:v1', 'models/in=7-out=8-linear-bias=False-offset=0-v1.ckpt'),
-                ('7-8:Linear:False:v2', 'models/in=7-out=8-linear-bias=False-offset=0-v2.ckpt'),
-
-                ('7-7:Nonlin:True:v1', 'models/in=7-out=7-nonlin-bias=True-offset=0-v1.ckpt'),
-                ('7-7:Nonlin:True:v2', 'models/in=7-out=7-nonlin-bias=True-offset=0-v2.ckpt'),
-                ('7-7:Nonlin:False:v1', 'models/in=7-out=7-nonlin-bias=False-offset=0-v1.ckpt'),
-                ('7-7:Nonlin:False:v2', 'models/in=7-out=7-nonlin-bias=False-offset=0-v2.ckpt'),
-                ('7-7:Tanh:True:v1', 'models/in=7-out=7-tanh-bias=True-offset=0-v1.ckpt'),
-                ('7-7:Tanh:True:v2', 'models/in=7-out=7-tanh-bias=True-offset=0-v2.ckpt'),
-                ('7-7:Tanh:False:v1', 'models/in=7-out=7-tanh-bias=False-offset=0-v1.ckpt'),
-                ('7-7:Tanh:False:v2', 'models/in=7-out=7-tanh-bias=False-offset=0-v2.ckpt'),
-                ('7-7:Linear:True:v1', 'models/in=7-out=7-linear-bias=True-offset=0-v1.ckpt'),
-                ('7-7:Linear:True:v2', 'models/in=7-out=7-linear-bias=True-offset=0-v2.ckpt'),
-                ('7-7:Linear:False:v1', 'models/in=7-out=7-linear-bias=False-offset=0-v1.ckpt'),
-                ('7-7:Linear:False:v2', 'models/in=7-out=7-linear-bias=False-offset=0-v2.ckpt'),
-            
-                ('7-6:Nonlin:True:v1', 'models/in=7-out=6-nonlin-bias=True-offset=0-v1.ckpt'),
-                ('7-6:Nonlin:True:v2', 'models/in=7-out=6-nonlin-bias=True-offset=0-v2.ckpt'),
-                ('7-6:Nonlin:False:v1', 'models/in=7-out=6-nonlin-bias=False-offset=0-v1.ckpt'),
-                ('7-6:Nonlin:False:v2', 'models/in=7-out=6-nonlin-bias=False-offset=0-v2.ckpt'),
-                ('7-6:Tanh:True:v1', 'models/in=7-out=6-tanh-bias=True-offset=0-v1.ckpt'),
-                ('7-6:Tanh:True:v2', 'models/in=7-out=6-tanh-bias=True-offset=0-v2.ckpt'),
-                ('7-6:Tanh:False:v1', 'models/in=7-out=6-tanh-bias=False-offset=0-v1.ckpt'),
-                ('7-6:Tanh:False:v2', 'models/in=7-out=6-tanh-bias=False-offset=0-v2.ckpt'),
-                ('7-6:Linear:True:v1', 'models/in=7-out=6-linear-bias=True-offset=0-v1.ckpt'),
-                ('7-6:Linear:True:v2', 'models/in=7-out=6-linear-bias=True-offset=0-v2.ckpt'),
-                ('7-6:Linear:False:v1', 'models/in=7-out=6-linear-bias=False-offset=0-v1.ckpt'),
-                ('7-6:Linear:False:v2', 'models/in=7-out=6-linear-bias=False-offset=0-v2.ckpt'),
-
-                ('7-5:Nonlin:True:v1', 'models/in=7-out=5-nonlin-bias=True-offset=0-v1.ckpt'),
-                ('7-5:Nonlin:True:v2', 'models/in=7-out=5-nonlin-bias=True-offset=0-v2.ckpt'),
-                ('7-5:Nonlin:False:v1', 'models/in=7-out=5-nonlin-bias=False-offset=0-v1.ckpt'),
-                ('7-5:Nonlin:False:v2', 'models/in=7-out=5-nonlin-bias=False-offset=0-v2.ckpt'),
-                ('7-5:Tanh:True:v1', 'models/in=7-out=5-tanh-bias=True-offset=0-v1.ckpt'),
-                ('7-5:Tanh:True:v2', 'models/in=7-out=5-tanh-bias=True-offset=0-v2.ckpt'),
-                ('7-5:Tanh:False:v1', 'models/in=7-out=5-tanh-bias=False-offset=0-v1.ckpt'),
-                ('7-5:Tanh:False:v2', 'models/in=7-out=5-tanh-bias=False-offset=0-v2.ckpt'),
-                ('7-5:Linear:True:v1', 'models/in=7-out=5-linear-bias=True-offset=0-v1.ckpt'),
-                ('7-5:Linear:True:v2', 'models/in=7-out=5-linear-bias=True-offset=0-v2.ckpt'),
-                ('7-5:Linear:False:v1', 'models/in=7-out=5-linear-bias=False-offset=0-v1.ckpt'),
-                ('7-5:Linear:False:v2', 'models/in=7-out=5-linear-bias=False-offset=0-v2.ckpt'),
-
-                ('7-4:Nonlin:True:v1', 'models/in=7-out=4-nonlin-bias=True-offset=0-v1.ckpt'),
-                ('7-4:Nonlin:True:v2', 'models/in=7-out=4-nonlin-bias=True-offset=0-v2.ckpt'),
-                ('7-4:Nonlin:False:v1', 'models/in=7-out=4-nonlin-bias=False-offset=0-v1.ckpt'),
-                ('7-4:Nonlin:False:v2', 'models/in=7-out=4-nonlin-bias=False-offset=0-v2.ckpt'),
-                ('7-4:Tanh:True:v1', 'models/in=7-out=4-tanh-bias=True-offset=0-v1.ckpt'),
-                ('7-4:Tanh:True:v2', 'models/in=7-out=4-tanh-bias=True-offset=0-v2.ckpt'),
-                ('7-4:Tanh:False:v1', 'models/in=7-out=4-tanh-bias=False-offset=0-v1.ckpt'),
-                ('7-4:Tanh:False:v2', 'models/in=7-out=4-tanh-bias=False-offset=0-v2.ckpt'),
-                ('7-4:Linear:True:v1', 'models/in=7-out=4-linear-bias=True-offset=0-v1.ckpt'),
-                ('7-4:Linear:True:v2', 'models/in=7-out=4-linear-bias=True-offset=0-v2.ckpt'),
-                ('7-4:Linear:False:v1', 'models/in=7-out=4-linear-bias=False-offset=0-v1.ckpt'),
-                ('7-4:Linear:False:v2', 'models/in=7-out=4-linear-bias=False-offset=0-v2.ckpt'),
-               ]
-
-def load_from_index(index):
-    name, path = descriptions[index]
-    model_type = dict(classes)[name.split(':')[1].lower()]
-    mdl = load_model_from_name(model_type, path[7:])
+def load_model_from_index(index):
+    path = descriptions[index]
+    model_type = dict(classes)[path.split('-')[2]]
+    mdl = load_model_from_name(model_type, path)
     return mdl
