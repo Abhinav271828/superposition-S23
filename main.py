@@ -97,8 +97,8 @@ descriptions = [('7-10:Nonlin:True:v1', 'models/in=7-out=10-nonlin-bias=True-off
                 ('7-4:Linear:False:v2', 'models/in=7-out=4-linear-bias=False-offset=0-v2.ckpt'),
                ]
 
-def load_and_check_dimensionality(index):
+def load_from_index(index):
     name, path = descriptions[index]
     model_type = dict(classes)[name.split(':')[1].lower()]
     mdl = load_model_from_name(model_type, path[7:])
-    check_dimensionality(mdl)
+    return mdl
