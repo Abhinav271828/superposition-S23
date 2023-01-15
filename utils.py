@@ -70,8 +70,8 @@ def visualise_model(model):
         visualise((torch.mm(hs[0].unsqueeze(0), w_h.transpose(0,1))+b_h+b_x).transpose(0,1), min=range_min, max=range_max, title="W_h • h_0 + b_h + b_x")
 
 def check_dimensionality(model, zero_out=None):
-    x = OffsetData(7, 0, 1000, 1)[0][0]
-    # [200, 7]
+    x = OffsetData(model.is_, 0, 1000, 1)[0][0]
+    # [200, is]
 
     if model.model_type == "nonlin":
         w_x = model.rnn.weight_ih_l0.detach()
@@ -143,7 +143,7 @@ def check_dimensionality(model, zero_out=None):
 def sv_box_plot():
     box = go.Figure().add_trace(go.Box(y=abs_ubs)).add_trace(go.Box(y=abs_lbs))
     box.show()
-    box = go.Figure().add_trace(go.Box(y=fst_ubs)).add_trace(go.Box(y=fst_lbs))
+    box = go.Figure().add_trace(go.Box(y=fst_ubs)).add_trace(go.Box(y=fst_lbs))#.add_trace(go.Scatter(y=sample))
     box.show()
     box = go.Figure().add_trace(go.Box(y=sum_ubs)).add_trace(go.Box(y=sum_lbs))
     box.show()
@@ -155,7 +155,7 @@ def train_and_save(model, name):
                                         mode='min',
                                         save_top_k=1)
     es = pl.callbacks.EarlyStopping(monitor='val_loss', mode='min', patience=3)
-    trn = pl.Trainer(auto_lr_find=True, max_epochs=100, callbacks=[ckpt, es])
+    trn = pl.Trainer(auto_lr_find=True, max_epochs=500, callbacks=[ckpt, es])
     trn.tune(model)
     trn.fit(model)
     trn.test(model)

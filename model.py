@@ -37,7 +37,7 @@ class ToyModels(pl.LightningModule):
         return self.get_dataloader(num_samples=5000)
     
     def test_dataloader(self):
-        ds = torch.load('testing_dataset.pkl')
+        ds = torch.load(f'testing_dataset-in={self.is_}-offset={self.offset}.pkl')
         dl = DataLoader(ds, batch_size=BATCH_SIZE)
         return dl
 

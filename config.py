@@ -5,6 +5,7 @@ import pytorch_lightning as pl
 import matplotlib.pyplot as plt
 import plotly.express as px
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import os
 from tqdm import tqdm
 from icecream import ic
