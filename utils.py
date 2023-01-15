@@ -140,12 +140,25 @@ def check_dimensionality(model, zero_out=None):
     visualise(tensor(s_e), 0, s_M.max(), title="Eigenvalues of error space")
     #print('\t'.join([str(x.item()) for x in s_e]))
 
-def sv_box_plot():
-    box = go.Figure().add_trace(go.Box(y=abs_ubs)).add_trace(go.Box(y=abs_lbs))
+def sv_box_plot(model):
+    if model.model_type == "nonlin":
+        w_x = model.rnn.weight_ih_l0.detach()
+    elif model.model_type == "linear":
+        w_x = model.w_x.weight
+    elif model.model_type == "tied":
+        w_x = model.rnn.weight_ih_l0
+    _, s_M, _ = svd(w_x.detach())
+
+    sample = s_M.tolist()
+    box = go.Figure().add_trace(go.Box(y=abs_ubs)).add_trace(go.Box(y=abs_lbs)).add_trace(go.Scatter(y=sample))
     box.show()
-    box = go.Figure().add_trace(go.Box(y=fst_ubs)).add_trace(go.Box(y=fst_lbs))#.add_trace(go.Scatter(y=sample))
+
+    sample = [(s/s_M[0]).item() for s in s_M]
+    box = go.Figure().add_trace(go.Box(y=fst_ubs)).add_trace(go.Box(y=fst_lbs)).add_trace(go.Scatter(y=sample, mode='lines'))
     box.show()
-    box = go.Figure().add_trace(go.Box(y=sum_ubs)).add_trace(go.Box(y=sum_lbs))
+
+    sample = [(s_M[:i].sum()/s_M.sum()).item() for i in range(len(s_M))]
+    box = go.Figure().add_trace(go.Box(y=sum_ubs)).add_trace(go.Box(y=sum_lbs)).add_trace(go.Scatter(y=sample))
     box.show()
 
 def train_and_save(model, name):
