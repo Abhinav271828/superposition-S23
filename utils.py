@@ -168,7 +168,7 @@ def train_and_save(model, name):
                                         mode='min',
                                         save_top_k=1)
     es = pl.callbacks.EarlyStopping(monitor='val_loss', mode='min', patience=3)
-    trn = pl.Trainer(auto_lr_find=True, max_epochs=500, callbacks=[ckpt, es])
+    trn = pl.Trainer(auto_lr_find=True, max_epochs=600, callbacks=[ckpt, es])
     trn.tune(model)
     trn.fit(model)
     trn.test(model)
