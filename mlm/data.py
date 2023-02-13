@@ -39,7 +39,7 @@ class RegData(Dataset):
         
         self.indices = tensor(indices)
         self.masked_indices = tensor(masked_indices)
-        self.pad_masks = tensor(pad_masks)
+        self.pad_masks = tensor(pad_masks).float()
 
     def __getitem__(self, index):
         return self.indices[index], self.masked_indices[index], self.pad_masks[index]
