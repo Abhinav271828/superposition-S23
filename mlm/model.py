@@ -29,11 +29,10 @@ class RegModel(pl.LightningModule):
         preds = self.decoder(reps)
         # [bz, sq, v]
 
-        masked_tokens = strings * (masked_strings == 9)
-        masked_tokens = masked_tokens[masked_tokens > 0]
-
-        masked_preds = (preds * (masked_strings == 9).unsqueeze(2).repeat(1,1,len(self.alphabet)))
-        masked_preds = masked_preds[masked_preds != 0.0].view(-1, len(self.alphabet))
+        masked_tokens = torch.masked_select(strings, masked_strings.eq(9)) # TODO: make 9 global MASK_IDX
+        masked_preds = torch.masked_select(preds.flatten(0,1), (masked_strings.eq(9)
+                                                                .unsqueeze(2).repeat(1,1,len(self.alphabet))
+                                                                .view(-1, len(self.alphabet)))).view(-1,len(self.alphabet))
 
         loss = self.lf(masked_preds, masked_tokens)
 
