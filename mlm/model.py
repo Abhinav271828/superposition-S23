@@ -49,9 +49,9 @@ class RegModel(pl.LightningModule):
     def test_step(self, batch, batch_idx):
         strings, _, pad_masks = batch
         reps = self(strings, pad_masks)
-        preds = self.decoder(reps)
+        preds = self.decoder(reps)[:, :, :-1]
 
-        loss = self.lf(preds.transpose(1,2), strings)
+        loss = self.lf(preds.transpose(1,2), strings[:, :, 1:])
         
         self.log("test_loss", loss, prog_bar=True)
         return loss
