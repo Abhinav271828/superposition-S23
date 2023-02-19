@@ -10,7 +10,7 @@ class RegData(Dataset):
         strings = []
         masked_strings = []
         max_length = 0
-        for _ in range(num_samples//2):
+        for _ in range(num_samples):
             sample = exrex.getone(self.regex)
             strings.append(sample)
             masked_strings.append(sample)
@@ -33,7 +33,7 @@ class RegData(Dataset):
             sample = strings[i]
             masked_sample = masked_strings[i]
             pad_length = max_length-len(sample)
-            pad_masks.append([1]*len(sample) + [0]*pad_length)
+            pad_masks.append([True]*len(sample) + [False]*pad_length)
             indices.append([self.v2i[c] for c in sample] + [pad_index]*pad_length)
             masked_indices.append([self.v2i[c] for c in masked_sample] + [pad_index]*pad_length)
         

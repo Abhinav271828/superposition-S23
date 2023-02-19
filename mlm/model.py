@@ -48,9 +48,10 @@ class RegModel(pl.LightningModule):
     def test_step(self, batch, batch_idx):
         strings, _, pad_masks = batch
         reps = self(strings, pad_masks)
-        preds = self.decoder(reps)[:, :, :-1]
+        preds = self.decoder(reps)[:, :-1, :]
+        # [bz, sq, v]
 
-        loss = self.lf(preds.transpose(1,2), strings[:, :, 1:])
+        loss = self.lf(preds.transpose(1,2), strings[:, 1:])
         
         self.log("test_loss", loss, prog_bar=True)
         return loss
@@ -59,10 +60,10 @@ class RegModel(pl.LightningModule):
         return self.get_dataloader()
 
     def val_dataloader(self):
-        return self.get_dataloader(num_samples=50000)
+        return self.get_dataloader(num_samples=5000)
     
     def test_dataloader(self):
-        return self.get_dataloader(num_samples=50000)
+        return self.get_dataloader(num_samples=5000)
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)

@@ -11,4 +11,3 @@ def train_and_save(model, name):
     trn.tune(model)
     trn.fit(model)
     trn.test(model)
-    print("Accuracy is", model.get_acc())
