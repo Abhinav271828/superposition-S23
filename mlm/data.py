@@ -33,13 +33,13 @@ class RegData(Dataset):
             sample = strings[i]
             masked_sample = masked_strings[i]
             pad_length = max_length-len(sample)
-            pad_masks.append([False]*len(sample) + [True]*pad_length)
-            indices.append([self.v2i[c] for c in sample] + [pad_index]*pad_length)
-            masked_indices.append([self.v2i[c] for c in masked_sample] + [pad_index]*pad_length)
+            indices.append([pad_index]*pad_length + [self.v2i[c] for c in sample])
+            masked_indices.append([pad_index]*pad_length + [self.v2i[c] for c in masked_sample])
+            pad_masks.append([i == pad_index for i in indices[-1]])
         
         self.indices = tensor(indices)
         self.masked_indices = tensor(masked_indices)
-        self.pad_masks = tensor(pad_masks).float()
+        self.pad_masks = tensor(pad_masks)
 
     def __getitem__(self, index):
         return self.indices[index], self.masked_indices[index], self.pad_masks[index]

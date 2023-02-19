@@ -12,4 +12,4 @@ model_kwargs = {'num_layers': 4,
 
 for i, regex in enumerate(regexes):
     mdl = RegModel(regex=regex, **model_kwargs, alphabet="0123abcd@M~")
-    train_and_save(mdl, f"regex={regex.replace('*', 'x')}")
+    train_and_save(mdl, f"regex={regex}")
