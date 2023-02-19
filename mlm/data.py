@@ -33,7 +33,7 @@ class RegData(Dataset):
             sample = strings[i]
             masked_sample = masked_strings[i]
             pad_length = max_length-len(sample)
-            pad_masks.append([True]*len(sample) + [False]*pad_length)
+            pad_masks.append([False]*len(sample) + [True]*pad_length)
             indices.append([self.v2i[c] for c in sample] + [pad_index]*pad_length)
             masked_indices.append([self.v2i[c] for c in masked_sample] + [pad_index]*pad_length)
         
