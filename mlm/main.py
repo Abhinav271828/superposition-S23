@@ -1,9 +1,9 @@
 from utils import *
 
-regexes = ["(abcd)*",
-           "(dab)*(320)*",
-           "((acd)|(013))*",
-           "(a|b|c|d)*(0|(2(0|1|3)*))"]
+regexes = ["(abcd)+",
+           "(dab)+(320)+",
+           "((acd)|(013))+",
+           "(a|b|c|d)+(0|(2(0|1|3)+))"]
 
 model_kwargs = {'num_layers': 4,
                 'emb_dim': 10,
