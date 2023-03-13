@@ -1,11 +1,12 @@
 import torch
 from torch import tensor
 import torch.nn.functional as F
-from torch.utils.data import Dataset
+#from torch.utils.data import Dataset
+from pytorch_lightning import LightningDataModule
 from torchtext.vocab import GloVe
 from icecream import ic
 
-class GenderBiasedWords(Dataset):
+class GenderBiasedWords(LightningDataModule):
     def __init__(self, split, name='6B', dim=300):
         self.embeddings = GloVe(name=name, dim=dim)
 
@@ -18,12 +19,21 @@ class GenderBiasedWords(Dataset):
         sorted_projections, sorted_indices = torch.sort(projections, descending=True)
         # [V]               [V]
 
-        gendered_words = torch.concat([sorted_indices[:7500], sorted_indices[-7500:]], dim=0)
-        # [15000]
-        genders = tensor([0]*7500 + [1]*7500)
-        # [15000]
+        abs_projections = projections.abs()
+        sorted_abs_projections, sorted_abs_indices = torch.sort(abs_projections)
 
-        associations = torch.stack([gendered_words, genders], dim=1)
+        gendered_words = torch.concat([sorted_indices[:7500],
+                                       sorted_indices[-7500:]], dim=0)
+        # [15000]
+        neutral_words = torch.masked_select(sorted_abs_indices,
+                                            sorted_abs_projections.le(0.03))[:7500]
+
+        words = torch.concat([gendered_words, neutral_words], dim=0)
+
+        genders = tensor([0]*7500 + [1]*7500 + [2]*len(neutral_words))
+        # [15000+n]
+
+        associations = torch.stack([words, genders], dim=1)
         # [15000, 2]
 
         perm = torch.randperm(15000)
@@ -40,7 +50,8 @@ class GenderBiasedWords(Dataset):
             self.associations = shuffled_associations[breaks[1]:]
     
     def __getitem__(self, index):
-        return self.associations[index, 0], self.associations[index, 1]
+        return self.embeddings.vectors[self.associations[index, 0]], \
+               self.associations[index, 1]
 
     def __len__(self):
         return self.associations.shape[0]
